@@ -32,11 +32,8 @@ def setserver(update: Update, context: CallbackContext):
     data = {"chat_id": chat_id, "server_address": server_address}
     
     try:
-        response = supabase.from_("servers").upsert(data, on_conflict=["chat_id"]).execute()
-        if response.status == 200:
-            update.message.reply_text(f"Server address set to {server_address} for this chat.")
-        else:
-            update.message.reply_text("Failed to set server address. Please try again.")
+        supabase.from_("servers").upsert(data, on_conflict=["chat_id"]).execute()
+        update.message.reply_text(f"Server address set to {server_address} for this chat.")
     except Exception as e:
         update.message.reply_text(f"Error: {str(e)}")
 
@@ -84,12 +81,8 @@ def setcoords(update: Update, context: CallbackContext):
         remark = " ".join(context.args[2:])
         data = {"chat_id": chat_id, "x": x, "z": z, "remark": remark}
         
-        response = supabase.from_("coordinates").insert(data).execute()
-        
-        if response.status == 201:
-            update.message.reply_text(f"Coordinates set to (x: {x}, z: {z}) with remark: {remark}")
-        else:
-            update.message.reply_text("Failed to set coordinates. Please try again.")
+        supabase.from_("coordinates").insert(data).execute()
+        update.message.reply_text(f"Coordinates set to (x: {x}, z: {z}) with remark: {remark}")
     except ValueError:
         update.message.reply_text("Invalid coordinates. Please use numbers for x and z.")
     except Exception as e:
