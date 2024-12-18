@@ -33,7 +33,7 @@ def setserver(update: Update, context: CallbackContext):
     
     try:
         response = supabase.from_("servers").upsert(data, on_conflict=["chat_id"]).execute()
-        if response.status_code in [200, 201]:
+        if response.status == 200:
             update.message.reply_text(f"Server address set to {server_address} for this chat.")
         else:
             update.message.reply_text("Failed to set server address. Please try again.")
@@ -86,7 +86,7 @@ def setcoords(update: Update, context: CallbackContext):
         
         response = supabase.from_("coordinates").insert(data).execute()
         
-        if response.status_code in [200, 201]:
+        if response.status == 201:
             update.message.reply_text(f"Coordinates set to (x: {x}, z: {z}) with remark: {remark}")
         else:
             update.message.reply_text("Failed to set coordinates. Please try again.")
