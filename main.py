@@ -5,6 +5,17 @@ import requests
 import random
 from supabase import create_client, Client
 
+"""
+ * Minecraft Telegram Bot by Candy
+ *
+ * This bot is made because I face many issues while playing on the server with my friends.
+ * Main issue being not able to know if the server is online or offline, which sometime is just a waste of time to ask/check.
+ * By adding this bot to our group, we get to instantly check our server status.
+ *
+ * Special thanks: Raff for suggesting the coord list idea <3
+ * Hosted on Railway
+"""
+
 # Initialise Supabase
 supabase_url = "https://msfutgjgflgkckxreksp.supabase.co"
 supabase_key = os.environ["SUPABASE_KEY"]
@@ -12,15 +23,21 @@ supabase: Client = create_client(supabase_url, supabase_key)
 
 updater = Updater(os.environ["BOT_TOKEN"], use_context=True)
 
+# Onboarding message
+def start(update: Update, context: CallbackContext): 
+    update.message.reply_text("Hey there fellow Minecrafter! Use /help to see a list of available commands.")
+
+# List of commands
 def help(update: Update, context: CallbackContext): 
     update.message.reply_text(
         "Available Commands:\n"
-        "/setserver - Configure server address\n"
+        "/setserver <address> - Configure server address (Artenos only)\n"
         "/mcstatus - Get server status\n"
         "/setcoords <x> <z> <remark> - Note coordinates\n"
         "/getcoords - Get noted coordinates\n"
     )
 
+# Configure server address (specific chat)
 def setserver(update: Update, context: CallbackContext):
     chat_id = str(update.message.chat_id)
 
@@ -37,6 +54,7 @@ def setserver(update: Update, context: CallbackContext):
     except Exception as e:
         update.message.reply_text(f"Error: {str(e)}")
 
+# Gets the status of server (on/off)
 def mcstatus(update: Update, context: CallbackContext):
     chat_id = str(update.message.chat_id)
     try:
@@ -68,6 +86,7 @@ def mcstatus(update: Update, context: CallbackContext):
     except Exception as e:
         update.message.reply_text(f"Error getting server status: {str(e)}")
 
+# Add a coordinate
 def setcoords(update: Update, context: CallbackContext):
     chat_id = str(update.message.chat_id)
 
@@ -88,6 +107,7 @@ def setcoords(update: Update, context: CallbackContext):
     except Exception as e:
         update.message.reply_text(f"Error: {str(e)}")
 
+# Get a list of coordinates
 def getcoords(update: Update, context: CallbackContext):
     chat_id = str(update.message.chat_id)
     try:
@@ -103,6 +123,7 @@ def getcoords(update: Update, context: CallbackContext):
         update.message.reply_text(f"Error: {str(e)}")
 
 # Bind commands
+updater.dispatcher.add_handler(CommandHandler('start', start))
 updater.dispatcher.add_handler(CommandHandler('setserver', setserver))
 updater.dispatcher.add_handler(CommandHandler('mcstatus', mcstatus))
 updater.dispatcher.add_handler(CommandHandler('help', help))
