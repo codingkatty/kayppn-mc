@@ -18,34 +18,42 @@ def help(update: Update, context: CallbackContext):
         "/setserver - Configure server address\n"
         "/mcstatus - Get server status\n"
         "/setcoords <x> <z> <remark> - Note coordinates\n"
+        "/getcoords - Get noted coordinates\n"
     )
 
 def setserver(update: Update, context: CallbackContext):
     chat_id = str(update.message.chat_id)
 
+    if not context.args:
+        update.message.reply_text("Usage: /setserver <address>")
+        return
+
     server_address = context.args[0]
     data = {"chat_id": chat_id, "server_address": server_address}
     
-    response = supabase.from_("servers").upsert(data, on_conflict=["chat_id"]).execute()
-    
-    if response.status_code == 200:
-        update.message.reply_text(f"Server address set to {server_address} for this chat.")
-    else:
-        update.message.reply_text("Failed to set server address. Please try again.")
+    try:
+        response = supabase.from_("servers").upsert(data, on_conflict=["chat_id"]).execute()
+        if response.status_code in [200, 201]:
+            update.message.reply_text(f"Server address set to {server_address} for this chat.")
+        else:
+            update.message.reply_text("Failed to set server address. Please try again.")
+    except Exception as e:
+        update.message.reply_text(f"Error: {str(e)}")
 
 def mcstatus(update: Update, context: CallbackContext):
     chat_id = str(update.message.chat_id)
-    response = supabase.from_("servers").select("server_address").eq("chat_id", chat_id).execute()
-    
-    if response.status_code != 200 or not response.data:
-        update.message.reply_text("Server address not configured. Use /setserver <address> to set it.")
-        return
-
-    server_address = response.data[0]["server_address"]
     try:
-        response = requests.get(f'https://api.mcstatus.io/v2/status/java/{server_address}')
-        data = response.json()
-        version_name = data['version']['name_clean']
+        response = supabase.from_("servers").select("server_address").eq("chat_id", chat_id).execute()
+        if not response.data:
+            update.message.reply_text("Server address not configured. Use /setserver <address> to set it.")
+            return
+
+        server_address = response.data[0]["server_address"]
+        
+        api_response = requests.get(f'https://api.mcstatus.io/v2/status/java/{server_address}')
+        data = api_response.json()
+        version_name = data.get('version', {}).get('name_clean', 'Unknown')
+        
         if version_name == "● Offline":
             responses = [
                 "Server Offline 🥲",
@@ -66,28 +74,40 @@ def mcstatus(update: Update, context: CallbackContext):
 def setcoords(update: Update, context: CallbackContext):
     chat_id = str(update.message.chat_id)
 
-    x = float(context.args[0])
-    z = float(context.args[1])
-    remark = " ".join(context.args[2:])
-    data = {"chat_id": chat_id, "x": x, "z": z, "remark": remark}
-    
-    response = supabase.from_("coordinates").insert(data).execute()
-    
-    if response.status_code == 201:
-        update.message.reply_text(f"Coordinates set to (x: {x}, z: {z}) with remark: {remark}")
-    else:
-        update.message.reply_text("Failed to set coordinates. Please try again.")
+    if len(context.args) < 3:
+        update.message.reply_text("Usage: /setcoords <x> <z> <remark>")
+        return
+
+    try:
+        x = float(context.args[0])
+        z = float(context.args[1])
+        remark = " ".join(context.args[2:])
+        data = {"chat_id": chat_id, "x": x, "z": z, "remark": remark}
+        
+        response = supabase.from_("coordinates").insert(data).execute()
+        
+        if response.status_code in [200, 201]:
+            update.message.reply_text(f"Coordinates set to (x: {x}, z: {z}) with remark: {remark}")
+        else:
+            update.message.reply_text("Failed to set coordinates. Please try again.")
+    except ValueError:
+        update.message.reply_text("Invalid coordinates. Please use numbers for x and z.")
+    except Exception as e:
+        update.message.reply_text(f"Error: {str(e)}")
 
 def getcoords(update: Update, context: CallbackContext):
     chat_id = str(update.message.chat_id)
-    response = supabase.from_("coordinates").select("*").eq("chat_id", chat_id).execute()
-    
-    if response.status_code != 200 or not response.data:
-        update.message.reply_text("No coordinates found. Use /setcoords <x> <z> <remark> to add coordinates.")
-        return
+    try:
+        response = supabase.from_("coordinates").select("*").eq("chat_id", chat_id).execute()
+        
+        if not response.data:
+            update.message.reply_text("No coordinates found. Use /setcoords <x> <z> <remark> to add coordinates.")
+            return
 
-    coords_list = "\n".join([f"(x: {coord['x']}, z: {coord['z']}) - {coord['remark']}" for coord in response.data])
-    update.message.reply_text(f"Stored Coordinates:\n{coords_list}")
+        coords_list = "\n".join([f"(x: {coord['x']}, z: {coord['z']}) - {coord['remark']}" for coord in response.data])
+        update.message.reply_text(f"Stored Coordinates:\n{coords_list}")
+    except Exception as e:
+        update.message.reply_text(f"Error: {str(e)}")
 
 # Bind commands
 updater.dispatcher.add_handler(CommandHandler('setserver', setserver))
@@ -96,3 +116,4 @@ updater.dispatcher.add_handler(CommandHandler('help', help))
 updater.dispatcher.add_handler(CommandHandler('setcoords', setcoords))
 updater.dispatcher.add_handler(CommandHandler('getcoords', getcoords))
 updater.start_polling()
+updater.idle()
