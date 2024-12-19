@@ -13,12 +13,12 @@ To try it yourself, you can simply messsage @kayppnmcserver_bot (the bot) on Tel
 ## Commands and Functions ⚙️
 You can use /help to get a series of commands.
 
-1. /setserver
+1. **/setserver** <br>
 Use `/setserver <address>` to configure a server address for the check status command. This allows flexibility for others to check their own server instead of a preset one.
 
 > Right now, it is only limited to Artenos servers. This is because our server is hosted on Artenos and the API we're using to get status has a rather weird unfixable bug towards Artenos servers. We will continue to make it better by supporting other server types.
 
-2. /mcstatus
+2. **/mcstatus** <br>
 Use `/mcstatus` to get the status of server, whether is online or offline. It has 3 random responses for online/offline (totaling 6). Example responses are:
 - "CHAT ITS ONLINE GOGOGO!!"
 - "Your life is on the line."
@@ -29,10 +29,10 @@ When server is offline:
 - "Server is ded."
 - "Nope not the time yet."
 
-3. /setcoords
+3. **/setcoords** <br>
 Use `/setcoords <x> <z> <remark>` to store a set of coordinates in the database. It is chat specific and you can store many of them. It is useful to store coordinates to important places such as mines, fortress and bases (etc) for easy and fast access.
 
-4. /getcoords
+4. **/getcoords** <br>
 Use `/getcoords` to get a list of coordinates.
 
 ## Tech Stack 📚
