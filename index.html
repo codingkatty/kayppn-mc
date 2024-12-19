@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kayppn MC</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter';
+            scrollbar-width: thin;
+            scrollbar-color: #333 #f1f1f1;
+        }
+
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, #333, #222);
+            border: 3px solid #f1f1f1;
+            transition: all 0.3s ease;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(to bottom, #444, #333);
+        }
+
+        body {
+            background-color: white;
+        }
+
+        .hero {
+            min-height: 80vh;
+            padding: 100px 20px;
+            text-align: left;
+            line-height: 100px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-image: radial-gradient(#ddd 1px, transparent 1px);
+            background-size: 30px 30px;
+            overflow: hidden;
+            --mouse-x: 50;
+            --mouse-y: 50;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(1000px circle at calc(var(--mouse-x) * 1%) calc(var(--mouse-y) * 1%),
+                    rgba(65, 105, 225, 0.1),
+                    rgba(70, 130, 180, 0.1),
+                    rgba(100, 149, 237, 0.1),
+                    transparent 60%),
+                radial-gradient(600px circle at calc(var(--mouse-x) * 1%) calc(var(--mouse-y) * 1%),
+                    rgba(135, 206, 235, 0.1),
+                    rgba(176, 196, 222, 0.1),
+                    transparent 40%);
+            filter: blur(10px);
+            opacity: 0;
+            transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 0;
+        }
+
+        .hero:hover::before {
+            opacity: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            padding: 40px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .hero h1 {
+            font-size: 4.2rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+            float: left;
+            animation: colorChange 5s infinite;
+            color: #00ff00;
+        }
+
+        @keyframes colorChange {
+            0% { color: #90EE90; }
+            50% { color: #228B22; }
+            100% { color: #90EE90; }
+        }
+
+        @keyframes backgroundChange {
+            0% { background-color: #90EE90; }
+            50% { background-color: #228B22; }
+            100% { background-color: #90EE90; }
+        }
+
+        .hero span {
+            animation: backgroundChange 5s infinite;
+            color: white;
+            padding: 3px 15px;
+            border-radius: 5px;
+            display: inline-block;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: #666;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .hero button {
+            margin-top: 30px;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #666;
+            border: #666 1px solid;
+            background-color: transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero button:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            color: white;
+            border: white 1px solid;
+            background-color: rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+        }
+
+        .features {
+            background-color: black;
+            color: white;
+            padding: 120px 40px;
+        }
+
+        .feature-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 80px;
+        }
+
+        .feature-box {
+            display: flex;
+            align-items: center;
+            gap: 60px;
+            padding: 60px;
+            border-radius: 24px;
+            transition: all 0.3s ease;
+            background: linear-gradient(to bottom right, rgba(255,255,255,0.03), transparent);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        code {
+            font-family: monospace;
+            color: #b9ebff;
+            background: rgba(255,255,255,0.1);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        .feature-box:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+
+        .feature-box:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            min-width: 100px;
+            text-align: center;
+        }
+
+        .feature-content {
+            flex: 1;
+        }
+
+        .feature-box h3 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+
+        .feature-box p {
+            font-size: 1.1rem;
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+
+        .footer {
+            padding: 20px 40px;
+            background: linear-gradient(to bottom, #fafafa, white);
+            color: #444;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .feature-box, .feature-box:nth-child(even) {
+                flex-direction: column;
+                text-align: center;
+                gap: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <div class="hero-content">
+            <h1>Best Telegram Bot<br>For <span>Minecrafters.</span></h1>
+            <br>
+            <button onclick="openInNewTab('https://t.me/kayppnmcserver_bot')">Try it out</button>
+            <button onclick="openInNewTab('https://github.com/codingkatty/kayppn-mc')" style="margin-left: 10px;">View the GitHub repo</button>
+        </div>
+    </div>
+
+    <div class="features">
+        <div class="feature-container">
+            <div class="feature-box">
+                <div class="feature-icon">
+                    <i class="fas fa-server"></i>
+                </div>
+                <div class="feature-content">
+                    <h3><code>/setserver</code> and <code>/mcstatus</code></h3>
+                    <p>Easily configure your Artenos server and check if its online or offline directly in chat.</p>
+                </div>
+            </div>
+
+            <div class="feature-box">
+                <div class="feature-icon">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <div class="feature-content">
+                    <h3><code>/setcoords</code> and <code>/getcoords</code></h3>
+                    <p>Save and share important locations with your fellow players, it is chat specific and stored within a database.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Candy 2024</p>
+    </div>
+
+    <script>
+        const hero = document.querySelector('.hero');
+        let start = null;
+        const duration = 8000;
+
+        function animate(timestamp) {
+            if (!start) start = timestamp;
+            const progress = (timestamp - start) % duration / duration;
+
+            const position = Math.floor(progress * 100);
+            hero.style.setProperty('--gradient-position', `${position}%`);
+
+            requestAnimationFrame(animate);
+        }
+
+        requestAnimationFrame(animate);
+
+        let lastUpdate = 0;
+        const throttleLimit = 1000 / 30;
+
+        function throttle(callback, limit) {
+            let waiting = false;
+            return function () {
+                if (!waiting) {
+                    callback.apply(this, arguments);
+                    waiting = true;
+                    setTimeout(function () {
+                        waiting = false;
+                    }, limit);
+                }
+            }
+        }
+
+        const handleMouseMove = throttle((e) => {
+            const rect = hero.getBoundingClientRect();
+            const currentTime = Date.now();
+
+            if (currentTime - lastUpdate > throttleLimit) {
+                const targetX = ((e.clientX - rect.left) / rect.width) * 100;
+                const targetY = ((e.clientY - rect.top) / rect.height) * 100;
+
+                const currentX = parseFloat(getComputedStyle(hero).getPropertyValue('--mouse-x')) || 50;
+                const currentY = parseFloat(getComputedStyle(hero).getPropertyValue('--mouse-y')) || 50;
+
+                const x = currentX + (targetX - currentX) * 0.1;
+                const y = currentY + (targetY - currentY) * 0.1;
+
+                hero.style.setProperty('--mouse-x', x);
+                hero.style.setProperty('--mouse-y', y);
+
+                lastUpdate = currentTime;
+            }
+        }, 16);
+
+        hero.addEventListener('mousemove', handleMouseMove);
+
+        function openInNewTab(url) {
+            window.open(url, '_blank', 'noopener,noreferrer');
+        }
+    </script>
+</body>
+</html>
