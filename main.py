@@ -33,8 +33,9 @@ def help(update: Update, context: CallbackContext):
         "Available Commands:\n"
         "/setserver <address> - Configure server address (Artenos only)\n"
         "/mcstatus - Get server status\n"
-        "/setcoords <x> <z> <remark> - Note coordinates\n"
+        "/setcoords <x> <z> <remark> [overworld/nether] - Note coordinates\n"
         "/getcoords - Get noted coordinates\n"
+        "/convertcoords <x> <z> [overworld/nether] - Convert coords to the other dimension\n"
     )
 
 # Configure server address (specific chat)
@@ -91,14 +92,20 @@ def setcoords(update: Update, context: CallbackContext):
     chat_id = str(update.message.chat_id)
 
     if len(context.args) < 3:
-        update.message.reply_text("Usage: /setcoords <x> <z> <remark>")
+        update.message.reply_text("Usage: /setcoords <x> <z> <remark> [overworld/nether]")
         return
 
     try:
         x = float(context.args[0])
         z = float(context.args[1])
-        remark = " ".join(context.args[2:])
-        data = {"chat_id": chat_id, "x": x, "z": z, "remark": remark}
+        if context.args[-1] == 'overworld' or context.args[-1] == 'nether':
+            remark = " ".join(context.args[2:-1])
+            dimension = context.args[-1]
+        else:
+            remark = " ".join(context.args[2:])
+            dimension = 'overworld'
+        
+        data = {"chat_id": chat_id, "x": x, "z": z, "remark": remark,"dimension":dimension}
         
         supabase.from_("coordinates").insert(data).execute()
         update.message.reply_text(f"Coordinates set to (x: {x}, z: {z}) with remark: {remark}")
@@ -117,8 +124,25 @@ def getcoords(update: Update, context: CallbackContext):
             update.message.reply_text("No coordinates found. Use /setcoords <x> <z> <remark> to add coordinates.")
             return
 
-        coords_list = "\n".join([f"(x: {coord['x']}, z: {coord['z']}) - {coord['remark']}" for coord in response.data])
+        coords_list = "\n".join([f"(x: {coord['x']}, z: {coord['z']}) - {coord['remark']} [{coord['dimension']}]" for coord in response.data])
         update.message.reply_text(f"Stored Coordinates:\n{coords_list}")
+    except Exception as e:
+        update.message.reply_text(f"Error: {str(e)}")
+def convertcoords(update: Update, context: CallbackContext):
+    chat_id = str(update.message.chat_id)
+    try:
+        x = float(context.args[0])
+        z = float(context.args[1])
+        if context.args[-1] == 'overworld' or context.args[-1] == 'nether':
+            remark = " ".join(context.args[2:-1])
+            dimension = context.args[-1]
+        else:
+            remark = " ".join(context.args[2:])
+            dimension = 'overworld'
+        if (dimension == 'overworld'):
+            update.message.reply_text(f"Coordinates equivalent in the nether is x: {x/8}, z: {z/8}")
+        else:
+            update.message.reply_text(f"Coordinates equivalent in the overworld is x: {x*8}, z: {z*8}")
     except Exception as e:
         update.message.reply_text(f"Error: {str(e)}")
 
@@ -129,5 +153,6 @@ updater.dispatcher.add_handler(CommandHandler('mcstatus', mcstatus))
 updater.dispatcher.add_handler(CommandHandler('help', help))
 updater.dispatcher.add_handler(CommandHandler('setcoords', setcoords))
 updater.dispatcher.add_handler(CommandHandler('getcoords', getcoords))
+updater.dispatcher.add_handler(CommandHandler('convertcoords', convertcoords))
 updater.start_polling()
 updater.idle()
