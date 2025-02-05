@@ -1,4 +1,4 @@
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
+from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, CallbackContext
 from telegram import Update, InlineQueryResultArticle, InputTextMessageContent
 import os
 import requests
@@ -21,7 +21,7 @@ supabase_url = "https://msfutgjgflgkckxreksp.supabase.co"
 supabase_key = os.environ["SUPABASE_KEY"]
 supabase: Client = create_client(supabase_url, supabase_key)
 
-updater = Updater(os.environ["BOT_TOKEN"], use_context=True)
+updater = ApplicationBuilder(os.environ["BOT_TOKEN"], use_context=True)
 
 # Onboarding message
 def start(update: Update, context: CallbackContext): 
