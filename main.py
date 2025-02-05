@@ -67,9 +67,10 @@ def mcstatus(update: Update, context: CallbackContext):
         
         api_response = requests.get(f'https://api.mcstatus.io/v2/status/java/{server_address}')
         data = api_response.json()
+        online_status = data.get('online')
         version_name = data.get('version', {}).get('name_clean', 'Unknown')
         
-        if version_name == "● Offline":
+        if version_name == "● Offline" or not online_status:
             responses = [
                 "Server Offline 🥲",
                 "Server is ded.",
