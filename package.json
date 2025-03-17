@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "A Telegram bot made to solve frequent issues in my Minecraft server group chat with friends, on Telegram. It can be easily added to a group chat on Telegram.",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
