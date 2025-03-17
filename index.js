@@ -74,7 +74,7 @@ bot.command('mcstatus', async (ctx) => {
     try {
         const apiResponse = await fetch(`https://api.mcstatus.io/v2/status/java/${serverAddress}`)
         const responseData = await apiResponse.json()
-        const onlineStatus = responseData.online
+        const onlineStatus = responseData.version.name_clean !== "● Offline";
         
         if (!onlineStatus) {
             const responses = [
